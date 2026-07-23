@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ruh ?</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Modern, okunabilir bir font olan Inter'i Google Fonts'tan çekiyoruz -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- AÇILIŞ EKRANI -->
+        <div id="home-screen" class="screen active">
+            <h1 class="logo">ruh ?</h1>
+            <p class="subtitle">Seninle aynı cevapları veren kişiyi bul.</p>
+            
+            <div class="mode-selection">
+                <!-- Ruh Eşi Butonu -->
+                <button class="mode-btn mate-btn" onclick="startQuiz('mate')">
+                    <img src="image/couple.webp" class="mascot-img" alt="Ruh Eşi">
+                    <span class="title">Ruh Eşi</span>
+                    <span class="desc">Aşksal ve rastgele sorular</span>
+                </button>
+                
+                <!-- Ruh Arkadaşı Butonu -->
+                <button class="mode-btn friend-btn" onclick="startQuiz('friend')">
+                    <img src="image/friend.webp" class="mascot-img" alt="Ruh Arkadaşı">
+                    <span class="title">Ruh Arkadaşı</span>
+                    <span class="desc">Arkadaşsal ve rastgele sorular</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- SORU EKRANI (Geçici) -->
+        <div id="quiz-screen" class="screen">
+            <!-- İçerik JavaScript (app.js) tarafından doldurulacak -->
+        </div>
+    </div>
+    
+    <!-- Firebase (Compat Versiyonu - Bilgisayarda direkt açabilmen için) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-database-compat.js"></script>
+
+    <!-- Uygulama Mantığı -->
+    <script src="questions.js"></script>
+    <script src="app.js"></script>
+    <script src="firebase-manager.js"></script>
+</body>
+</html>
