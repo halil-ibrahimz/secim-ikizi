@@ -62,6 +62,13 @@ function attachFormListeners(resultCode) {
             return;
         }
 
+        // SPAM KONTROLÜ (1 Dakika Cooldown)
+        const lastNoteTime = localStorage.getItem('ruhEsiSonMesajZamani');
+        if (lastNoteTime && (Date.now() - parseInt(lastNoteTime)) < 60000) {
+            alert("Çok hızlı mesaj bırakıyorsun! Lütfen 1 dakika bekleyip tekrar dene. ⏳");
+            return;
+        }
+
         saveNoteBtn.innerText = "Bırakılıyor...";
         saveNoteBtn.style.pointerEvents = "none";
 
@@ -73,6 +80,9 @@ function attachFormListeners(resultCode) {
                 contact: contact,
                 timestamp: Date.now()
             });
+
+            // Başarılı olursa son mesaj zamanını kaydet
+            localStorage.setItem('ruhEsiSonMesajZamani', Date.now());
             
             document.getElementById('saveStatus').style.display = 'block';
             saveNoteBtn.style.display = 'none';
