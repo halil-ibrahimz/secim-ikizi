@@ -13,12 +13,24 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
+// XSS Koruması: Kullanıcı girdilerindeki HTML karakterlerini güvenli metne dönüştürür
+function escapeHTML(str) {
+    if (typeof str !== 'string') return '';
+    return str.replace(/[&<>"']/g, (char) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    }[char]));
+}
+
 // Arayüz kodlarını kısaltmak için Ortak Form HTML'i
 function getFormHTML(color, btnColor) {
     return `
-        <textarea id="userMessage" placeholder="Mesajını buraya yaz..." style="width: 100%; height: 80px; padding: 1rem; border-radius: 12px; border: 2px solid rgba(0,0,0,0.05); margin-bottom: 0.8rem; font-family: 'Outfit', sans-serif; resize: none; font-size: 1rem; outline: none; transition: border-color 0.3s;" onfocus="this.style.borderColor='${color}'" onblur="this.style.borderColor='rgba(0,0,0,0.05)'"></textarea>
+        <textarea id="userMessage" maxlength="500" placeholder="Mesajını buraya yaz..." style="width: 100%; height: 80px; padding: 1rem; border-radius: 12px; border: 2px solid rgba(0,0,0,0.05); margin-bottom: 0.8rem; font-family: 'Outfit', sans-serif; resize: none; font-size: 1rem; outline: none; transition: border-color 0.3s;" onfocus="this.style.borderColor='${color}'" onblur="this.style.borderColor='rgba(0,0,0,0.05)'"></textarea>
         
-        <input type="text" id="userContact" placeholder="İletişim (Opsiyonel)" style="width: 100%; padding: 1rem; border-radius: 12px; border: 2px solid rgba(0,0,0,0.05); margin-bottom: 1rem; font-family: 'Outfit', sans-serif; font-size: 1rem; outline: none; transition: border-color 0.3s;" onfocus="this.style.borderColor='${color}'" onblur="this.style.borderColor='rgba(0,0,0,0.05)'">
+        <input type="text" id="userContact" maxlength="100" placeholder="İletişim (Opsiyonel)" style="width: 100%; padding: 1rem; border-radius: 12px; border: 2px solid rgba(0,0,0,0.05); margin-bottom: 1rem; font-family: 'Outfit', sans-serif; font-size: 1rem; outline: none; transition: border-color 0.3s;" onfocus="this.style.borderColor='${color}'" onblur="this.style.borderColor='rgba(0,0,0,0.05)'">
         
         <div style="display: flex; align-items: flex-start; gap: 0.5rem; margin-bottom: 1.5rem; text-align: left;">
             <input type="checkbox" id="kvkkCheck" style="margin-top: 0.2rem; cursor: pointer; transform: scale(1.2); accent-color: ${color};">
@@ -54,8 +66,8 @@ function attachFormListeners(resultCode) {
     });
 
     saveNoteBtn.addEventListener('click', async () => {
-        const msg = userMessage.value.trim();
-        const contact = userContact.value.trim();
+        const msg = userMessage.value.trim().slice(0, 500);
+        const contact = userContact.value.trim().slice(0, 100);
         
         if (!msg) {
             alert("Lütfen ufak da olsa bir mesaj yaz!");
@@ -134,12 +146,12 @@ function renderCarouselUI() {
             ${paginationHTML}
             
             <div style="background: #f9f9fa; padding: 1rem; border-radius: 12px; font-style: italic; color: var(--text-main); font-size: 1.1rem; margin-bottom: 1rem; border-left: 4px solid ${color}; text-align: left;">
-                "${m.message}"
+                "${escapeHTML(m.message)}"
             </div>
             
             ${m.contact ? `
             <div style="background: rgba(0,0,0,0.03); padding: 0.8rem; border-radius: 8px; font-weight: bold; color: var(--text-main); text-align: left;">
-                İletişim: <span style="color: ${color};">${m.contact}</span>
+                İletişim: <span style="color: ${color};">${escapeHTML(m.contact)}</span>
             </div>
             ` : '<p style="color: var(--text-muted); font-size: 0.85rem; text-align: left;">(Sadece anonim bir not bırakmış.)</p>'}
             
